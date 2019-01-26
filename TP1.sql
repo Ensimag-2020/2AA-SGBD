@@ -66,3 +66,16 @@ SELECT DEPTNO FROM DEPT WHERE DEPTNO NOT IN (SELECT DISTINCT DEPTNO FROM EMP);
 
 -- Q20: Quel est le département qui emploie le plus de salariés ?
 SELECT DEPTNO, COUNT(EMPNO) FROM EMP GROUP BY DEPTNO HAVING COUNT(EMPNO) = (SELECT MAX(COUNT(EMPNO)) FROM EMP GROUP BY DEPTNO);SELECT D.DEPTNO FROM EMP E, DEPT D WHERE D.DEPTNO = E.DEPTNO AND D.LOC != 'CHICAGO' GROUP BY D.DEPTNO HAVING count(E.EMPNO) >= 3;SELECT D.DEPTNO FROM EMP E, DEPT D WHERE D.DEPTNO = E.DEPTNO AND D.LOC != 'CHICAGO' GROUP BY D.DEPTNO HAVING count(E.EMPNO) >= 3;
+
+-- Solution plus simple
+SELECT DEPT.DEPTNO, COUNT(EMP.EMPNO)
+FROM DEPT,
+     EMP
+WHERE DEPT.DEPTNO = EMP.DEPTNO
+GROUP BY EMP.DEPTNO
+HAVING COUNT(EMP.EMPNO) >= ALL (SELECT COUNT(EMP.EMPNO)
+                                     FROM DEPT,
+                                          EMP
+                                     WHERE DEPT.DEPTNO = EMP.DEPTNO
+                                     GROUP BY EMP.DEPTNO)
+                                                                                       
